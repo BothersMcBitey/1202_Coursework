@@ -26,9 +26,19 @@ public class Bucket {
 		return amount;
 	}
 	
+	public void removeFood(int amount){
+		if(this.amount > amount){
+			this.amount -= amount;
+		}
+	}
+	
 	public void addFood(int amount){
 		if(amount > 0){
-			this.amount += amount;
+			if(amount + this.amount > capacity){
+				this.amount = capacity;
+			} else {
+				this.amount += amount;
+			}
 		}
 	}
 }

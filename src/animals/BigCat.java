@@ -1,9 +1,14 @@
 package animals;
 
-public abstract class BigCat extends Animal {
+import java.util.HashSet;
 
+import food.Food;
+import main.Zoo;
+
+public abstract class BigCat extends Animal {
+	
 	public BigCat(int age, char gender, int health) {
-		super(age, gender, new String[] {"steak", "celery"}, health, 24);
+		super(age, gender, new Food[] {Zoo.STEAK, Zoo.CELERY}, health, 24);
 	}
 
 	@Override

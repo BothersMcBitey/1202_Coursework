@@ -3,6 +3,7 @@ package structures;
 import java.util.ArrayList;
 
 import animals.*;
+import food.Food;
 
 public class Enclosure {
 
@@ -19,6 +20,11 @@ public class Enclosure {
 	public void addAnimal(Animal animalToAdd){
 		if(animals.size() < 20){
 			animals.add(animalToAdd);
+			for(Food f : animalToAdd.eats){
+				if(!foodstore.contains(f)){
+					foodstore.addBucket(f, 5);
+				}
+			}
 		}
 		//TODO: add code to handle full array
 	}
@@ -30,7 +36,7 @@ public class Enclosure {
 		//TODO: add code to handle missing animal
 	}
 	
-	/*
+	/**
 	 *Removes specified amount of waste from enclosure, 
 	 *sets waste to zero if removing more waste than is present
 	 */
@@ -58,7 +64,7 @@ public class Enclosure {
 		return animals.size();
 	}
 	
-	/*
+	/**
 	 * passes the month for each animal, removes animal
 	 * if it died
 	 */
