@@ -1,12 +1,14 @@
 package food;
 
+/**
+ * A bucket is a representation of the amount of food 
+ * of a specific type each Foodstore can hold, and how
+ * much it currently contains.
+ * 
+ * @author callum
+ *
+ */
 public class Bucket {
-	
-	/**
-	 * A bucket is a representation of the amount of food 
-	 * of a specific type each Foodstore can hold, and how
-	 * much it currently contains.
-	 */
 	
 	//max food that can fit in the bucket
 	private int capacity;
@@ -26,9 +28,11 @@ public class Bucket {
 		return amount;
 	}
 	
-	public void removeFood(int amount){
+	public void removeFood(int amount) throws InsufficientFoodException{
 		if(this.amount > amount){
 			this.amount -= amount;
+		} else {
+			throw new InsufficientFoodException(this.amount, amount);
 		}
 	}
 	

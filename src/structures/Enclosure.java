@@ -17,7 +17,7 @@ public class Enclosure {
 		waste = 0;
 	}
 	
-	public void addAnimal(Animal animalToAdd){
+	public void addAnimal(Animal animalToAdd) throws EnclosureFullException {
 		if(animals.size() < 20){
 			animals.add(animalToAdd);
 			for(Food f : animalToAdd.eats){
@@ -25,15 +25,21 @@ public class Enclosure {
 					foodstore.addBucket(f, 5);
 				}
 			}
+		} else {
+			throw new EnclosureFullException();
 		}
-		//TODO: add code to handle full array
 	}
 	
-	public void removeAnimal(Animal animalToRemove){
+	public void removeAnimal(Animal animalToRemove) throws AnimalNotFoundException{
 		if(animals.contains(animalToRemove)){
 			animals.remove(animalToRemove);
+		} else{
+			throw new AnimalNotFoundException();
 		}
-		//TODO: add code to handle missing animal
+	}
+	
+	public Animal[] getAnimals(){
+		return animals.toArray(new Animal[animals.size()]);
 	}
 	
 	/**

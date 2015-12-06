@@ -1,5 +1,8 @@
 package animals;
 
+import zookeepers.PlayZookeeper;
+import zookeepers.Zookeeper;
+
 public class Chimpanzee extends Ape {
 
 	/*
@@ -14,8 +17,12 @@ public class Chimpanzee extends Ape {
 	}
 	
 	@Override
-	public void treat(){
-		playChase();
+	public void treat(Zookeeper keeper){
+		if(keeper instanceof PlayZookeeper){
+			playChase();
+		} else {
+			//throw an exception
+		}
 	}
 
 	private void playChase() {

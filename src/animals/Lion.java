@@ -14,7 +14,7 @@ public class Lion extends BigCat {
 	}
 
 	@Override
-	public void stroked() {
+	public void stroke() {
 		health += 2;
 	}
 
