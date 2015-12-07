@@ -28,6 +28,9 @@ public class Bucket {
 		return amount;
 	}
 	
+	/*throwing exception lets other classes handle what to do when there's
+	 * not enough food left 
+	 */
 	public void removeFood(int amount) throws InsufficientFoodException{
 		if(this.amount >= amount){
 			this.amount -= amount;
@@ -37,6 +40,7 @@ public class Bucket {
 	}
 	
 	public void addFood(int amount){
+		//so you can't add -food
 		if(amount > 0){
 			if(amount + this.amount > capacity){
 				this.amount = capacity;

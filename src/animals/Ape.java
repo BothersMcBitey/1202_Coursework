@@ -3,6 +3,7 @@ package animals;
 import food.Food;
 import main.Zoo;
 import structures.Enclosure;
+import zookeepers.UnqualifiedZookeeperException;
 import zookeepers.Zookeeper;
 
 public abstract class Ape extends Animal {
@@ -12,7 +13,7 @@ public abstract class Ape extends Animal {
 	}
 	
 	@Override
-	public void treat(Zookeeper keeper) {
+	public void treat(Zookeeper keeper) throws UnqualifiedZookeeperException {
 		super.treat(keeper);
 	}
 }

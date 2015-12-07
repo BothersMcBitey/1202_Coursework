@@ -6,14 +6,22 @@ import food.*;
 
 public class Foodstore {
 
+	//links each food with its own bucket
 	private HashMap<Food, Bucket> store;
-	
-	public boolean contains(Food food){
-		return store.containsKey(food);
-	}
 	
 	public Foodstore(){	
 		store = new HashMap<Food, Bucket>();
+	}
+	
+	/* if the requested food isn't present throw an exception,
+	 * if it is reduce the stored amount by the amount requested
+	 */
+	public void takeFood(Food food, int amount) throws FoodNotFoundException, InsufficientFoodException{
+		if(store.containsKey(food)){
+			store.get(food).removeFood(amount);
+		} else {
+			throw new FoodNotFoundException(food);
+		}
 	}
 	
 	public void addFood(Food food, int amount){
@@ -25,6 +33,7 @@ public class Foodstore {
 		}
 	}
 	
+	//get how much food of a certain type is left
 	public int getRemaining(Food food) throws FoodNotFoundException{
 		if(store.containsKey(food)){
 			return store.get(food).getAmount();
@@ -32,22 +41,20 @@ public class Foodstore {
 			throw new FoodNotFoundException(food);
 		}
 	}
-	
-	public void addBucket(Food food, int max){
-		store.put(food, new Bucket(max));
-	}
-	
-	/**
-	 * if the requested food isn't present throw an exception,
-	 * if it is reduce the stored amount by the amount requested
-	 * @throws FoodNotFoundException 
-	 * @throws InsufficientFoodException 
-	 */
-	public void takeFood(Food food, int amount) throws FoodNotFoundException, InsufficientFoodException{
+	//get how much space is left in a bucket
+	public int getSpace(Food food) throws FoodNotFoundException{
 		if(store.containsKey(food)){
-			store.get(food).removeFood(amount);
+			return store.get(food).getCapacity() - store.get(food).getAmount();
 		} else {
 			throw new FoodNotFoundException(food);
 		}
+	}
+	
+	public void addBucket(Food food, int max){
+		store.put(food, new Bucket(max));
+	}	
+	
+	public boolean contains(Food food){
+		return store.containsKey(food);
 	}
 }

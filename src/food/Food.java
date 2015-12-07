@@ -2,6 +2,7 @@ package food;
 
 public class Food {
 
+	//name of the food, e.g. "steak"
 	private String name;
 	//how much health it restores
 	private int energy;

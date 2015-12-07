@@ -2,8 +2,6 @@ package structures;
 
 import java.util.ArrayList;
 
-import javax.xml.transform.Templates;
-
 import animals.*;
 import food.Food;
 import main.Zoo;
@@ -22,9 +20,29 @@ public class Enclosure {
 		this.name = name;
 	}
 	
+	/* passes the month for each animal, removes animal
+	 * if it died
+	 */
+	public void aMonthPasses(){
+		/*create temporary array of animals, because removing dead animals from the
+		 * list while iterating through it causes an exception  
+		 */
+		Animal[] tempAnimals = new Animal[0]; 
+	    tempAnimals =  animals.toArray(tempAnimals);
+		for(Animal a : tempAnimals){
+			//gets the animal to do it's stuff for the month, and checks of it died
+			if(!a.aMonthPasses()){
+				animals.remove(a);
+				Zoo.out.println(name + " removing " + a.getName() + " because it died");
+			}
+		}
+		Zoo.out.println(name + " has " + waste + " loads of wate in it");
+	}
+	
 	public void addAnimal(Animal animalToAdd) throws EnclosureFullException {
 		if(animals.size() < 20){
 			animals.add(animalToAdd);
+			//make sure the enclosure has buckets for the food the new animal eats
 			for(Food f : animalToAdd.eats){
 				if(!foodstore.contains(f)){
 					foodstore.addBucket(f, 5);
@@ -43,12 +61,7 @@ public class Enclosure {
 		}
 	}
 	
-	public Animal[] getAnimals(){
-		return animals.toArray(new Animal[animals.size()]);
-	}
-	
-	/**
-	 *Removes specified amount of waste from enclosure, 
+	/*Removes specified amount of waste from enclosure, 
 	 *sets waste to zero if removing more waste than is present
 	 */
 	public void removeWaste(int amount){
@@ -61,6 +74,12 @@ public class Enclosure {
 	
 	public void addWaste(int amount){
 		waste += amount;
+	}
+	
+	//getters=============================================
+	
+	public Animal[] getAnimals(){
+		return animals.toArray(new Animal[animals.size()]);
 	}
 	
 	public int getWasteSize(){
@@ -77,21 +96,5 @@ public class Enclosure {
 	
 	public String getName(){
 		return name;
-	}
-	
-	/**
-	 * passes the month for each animal, removes animal
-	 * if it died
-	 */
-	public void aMonthPasses(){
-		Animal[] tempAnimals = new Animal[0]; 
-	    tempAnimals =  animals.toArray(tempAnimals);
-		for(Animal a : tempAnimals){
-			if(!a.aMonthPasses()){
-				animals.remove(a);
-				Zoo.out.println(name + " removing " + a.getName() + " because it died");
-			}
-		}
-		Zoo.out.println(name + " has " + waste + " loads of wate in it");
 	}
 }

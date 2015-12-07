@@ -1,13 +1,8 @@
 package main;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -23,39 +18,20 @@ public class Zoo {
 	
 	//Static stuff ========================================================
 	
-	public static HashSet<Food> foods;
-	
-	//So output can be easily switched to a log file
-	/*
+ 	/* So output can be easily switched to a log file, So you can control how fast 
+	 * messages are printed to the screen
+	 * 
 	 * out is static so it can be used in intitializeFoods() and to make it easier
 	 * to reference in other classes, but could just as easily be instance based 
-	 * so each zoo can have it's own log
+	 * so each zoo can have it's own log - could pass out as parameter
 	 */
 	public static DelayedPrintStream out;
 	
-	//So you can control how fast messages are printed to the screen
-	public class DelayedPrintStream extends PrintStream{
-
-		private static final int WAIT = 0;
-		
-		public DelayedPrintStream(OutputStream out) {
-			super(out);
-		}
-		
-		@Override
-		public void println(String s){
-			try {
-				Thread.sleep(WAIT);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			super.println(s);
-		}
-		
-	}
+	//Slightly clunky solution, will rework if I have time
+	public static HashSet<Food> foods;
 	
-	/*
-	 * Slightly clunky solution, will rework if I have time
+	/* Make a bunch of food constants other classes can refer to so you can
+	 * assume you're always referring to the same instance of STEAK for example 
 	 */
 	public static final Food HAY = new Food("hay", 1, 4);
 	public static final Food STEAK = new Food("steak", 3, 4);
@@ -64,6 +40,9 @@ public class Zoo {
 	public static final Food FISH = new Food("fish", 3, 2);
 	public static final Food ICE_CREAM = new Food("ice cream", 1, 3);
 	
+	/*
+	 * Adds each food type to the 'foods' hashset so they can be iterated over 
+	 */
 	private static void initializeFoods(){
 		foods = new HashSet<Food>();
 		out.println("foods created");
@@ -90,47 +69,115 @@ public class Zoo {
 	private final int MAX_FOOD = 50;
 	
 	public Zoo(String config){
-		out = new DelayedPrintStream(System.out);
+		out = new DelayedPrintStream(System.out, 250);
+		
+		//sets up the food store and food type constants
 		out.println("LOADING SIMULATOR:");
 		store = new Foodstore();
 		out.println("foodstore created");
 		if(foods == null) initializeFoods();
 		out.println("--------------------------");
 		out.println();
+		
+		//loads the zoo from the config file supplied
 		out.println("INITIALIZING ZOO:");
-		if(config != null) initializeZoo(config);
-		out.println("finished constructing zoo");
+		initializeZoo();
+		if(config != null){
+			loadConfig(config);
+			out.println("finished constructing zoo");
+		} else {
+			out.println("no config file, creating empty zoo");
+		}
 		out.println("--------------------------");
 		out.println();
 	}
 	
-	private void initializeZoo(String config) {
-		//ensure the foodstore has a bucket for all foods
+	public void go(){
+		out.println("RUNNING SIMULATION: " + name);
+		out.println();
+		
+		int month = 1;
+		int interval = 1000;
+		
+		while(true){
+			out.println("MONTH " + month + ":");
+			aMonthPasses();
+			out.println("----------------------");
+			out.println();
+			month++;
+			try{
+				Thread.sleep(interval);
+			} catch (InterruptedException e){
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void aMonthPasses(){
+		//restock the zoo store first, which reduces chance of the zoo running out of food
+		out.println("Restocking Food:");
+		for(Food f : foods){
+			store.addFood(f, 20);
+			try {
+				out.println("adding " + f.getName() + ", store now has " + store.getRemaining(f));
+			} catch (FoodNotFoundException e) {
+				/* should be impossible, as initializeZoo() adds buckets for all the foods, and by
+				 * adding the target food to the store in the line prior you guarantee a bucket exists anyway
+				 */
+				e.printStackTrace();
+			}
+		}
+		out.println();
+		
+		//Zookeepers do stuff next, which reduces chance of enclosures running out of food
+		for(Zookeeper z : zookeepers){
+			out.println(z.getName() + ":");
+			z.aMonthPasses();
+			out.println();
+		}
+		
+		//now each enclosure can work out what it's doing
+		for(Enclosure e : enclosures){
+			out.println(e.getName() + ":");
+			e.aMonthPasses();
+		}
+	}
+	
+	private void initializeZoo() {
+		//ensure the food store has a bucket for each food
 		for(Food f : foods){
 			store.addBucket(f, MAX_FOOD);
 		}
 		enclosures = new ArrayList<>();
 		zookeepers = new ArrayList<>();
+	}
+	
+	private void loadConfig(String config){
 		//Make sure the file exists and create a reader for it
 		BufferedReader br; 
 		try{
 			br = new BufferedReader(new FileReader(config));
 			//go through each line
 			String line;
-			// [0] is the class, 1 is the parameters
+			/*
+			 * property will contain two strings, the tag (e.g. "tiger:") and the parameters (e.g. "Leo,M,12,5,0")
+			 * parameters will contain each parameter as a separate string, e.g. {"leo", "m", "12", "5", "0"}
+			 */
 			String[] property;
 			String[] parameters;
+			//while there's still text in the file
 			while(br.ready()){
 				line = br.readLine();
+				//convert the line to property and param as described above
 				property = line.split(":");
-				//split up everything on the left of the ':' based on ','s
 				parameters = property[1].split(",");
-				//sort out what to do
 				try{
+					/* process each tag as described in the README
+					 */
 					switch (property[0]) {
 						case "zoo":
 							name = parameters[0];
-							System.out.println("Building " + parameters[0]);
+							out.println("Building " + parameters[0]);
 							break;
 							
 						case "steak":case "hay":case "fruit":case "celery":case "fish":case "icecream":
@@ -149,6 +196,7 @@ public class Zoo {
 							out.println("adding " + property[0] + " " + parameters[0] + " to enclosure");
 							break;
 							
+						//very minor code duplication across these three, but trying to avoid this would be quite awkward, so it stays
 						case "zookeeper":							
 							zookeepers.add(new Zookeeper(parameters[0], enclosures.get(enclosures.size() -1), store));
 							out.println("adding " + property[0] + " to enclosure");
@@ -162,8 +210,9 @@ public class Zoo {
 							out.println("adding " + property[0] + " to enclosure");
 							break;
 							
+						//so users can see when they've got unused tags
 						default:
-							System.out.println("Tag \"" + property[0] + "\" not recognized.");
+							out.println("Tag \"" + property[0] + "\" not recognized.");
 							break;
 					}
 				} catch (NullPointerException e){
@@ -177,25 +226,25 @@ public class Zoo {
 		}
 	}
 	
-	private void addAnimalToEnclosure(String animal, String name, char gender, int age, int health, int enclosure){
-		Enclosure tempEnclosure = enclosures.get(enclosure);
+	private void addAnimalToEnclosure(String animal, String name, char gender, int age, int health, int enclosureIndex){ 
+		Enclosure targetEnclosure = enclosures.get(enclosureIndex);
 		try{
 			switch (animal) {
-			case "lion":
-				tempEnclosure.addAnimal(new Lion(name, age, gender, health, tempEnclosure));
-				break;
-			case "tiger":
-				tempEnclosure.addAnimal(new Tiger(name, age, gender, health, tempEnclosure));	
-				break;
-			case "gorilla":
-				tempEnclosure.addAnimal(new Gorilla(name, age, gender, health, tempEnclosure));
-				break;
-			case "chimpanzee":
-				tempEnclosure.addAnimal(new Chimpanzee(name, age, gender, health, tempEnclosure));
-				break;
+				case "lion":
+					targetEnclosure.addAnimal(new Lion(name, age, gender, health, targetEnclosure));
+					break;
+				case "tiger":
+					targetEnclosure.addAnimal(new Tiger(name, age, gender, health, targetEnclosure));	
+					break;
+				case "gorilla":
+					targetEnclosure.addAnimal(new Gorilla(name, age, gender, health, targetEnclosure));
+					break;
+				case "chimpanzee":
+					targetEnclosure.addAnimal(new Chimpanzee(name, age, gender, health, targetEnclosure));
+					break;
 			}
 		} catch (EnclosureFullException e){
-			System.err.println("Cannot add " + animal + " to enclosure " + tempEnclosure);
+			out.println("Cannot add " + animal + " to enclosure " + targetEnclosure);
 		}
 	}
 
@@ -227,47 +276,6 @@ public class Zoo {
 			case "icecream":
 				targetStore.addFood(ICE_CREAM, amount);
 				break;
-		}
-	}
-
-	public void go(){
-		out.println("RUNNING SIMULATION:");
-		out.println();
-		int month = 1;
-		while(true){
-			out.println("MONTH " + month + ":");
-			aMonthPasses();
-			out.println("----------------------");
-			out.println();
-			month++;
-			try{
-				Thread.sleep(100);
-			} catch (InterruptedException e){
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private void aMonthPasses(){
-		for(Zookeeper z : zookeepers){
-			out.println(z.getName() + ":");
-			z.aMonthPasses();
-			out.println();
-		}
-		for(Enclosure e : enclosures){
-			out.println(e.getName() + ":");
-			e.aMonthPasses();
-			out.println();
-		}
-		out.println("Restocking Food:");
-		for(Food f : foods){
-			store.addFood(f, 20);
-			try {
-				out.println("adding " + f.getName() + ", store now has " + store.getRemaining(f));
-			} catch (FoodNotFoundException e1) {
-				//should be impossible
-				e1.printStackTrace();
-			}
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package animals;
 
+
 import structures.Enclosure;
+import zookeepers.Zookeeper;
 
 public class Lion extends BigCat {
 
@@ -16,8 +18,7 @@ public class Lion extends BigCat {
 	}
 
 	@Override
-	public void stroke() {
-		health += 2;
+	public void treat(Zookeeper keeper) {
+		super.stroke(2);
 	}
-
 }

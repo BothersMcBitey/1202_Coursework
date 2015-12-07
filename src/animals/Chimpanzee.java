@@ -1,7 +1,9 @@
 package animals;
 
+import main.Zoo;
 import structures.Enclosure;
 import zookeepers.PlayZookeeper;
+import zookeepers.UnqualifiedZookeeperException;
 import zookeepers.Zookeeper;
 
 public class Chimpanzee extends Ape {
@@ -18,16 +20,23 @@ public class Chimpanzee extends Ape {
 	}
 	
 	@Override
-	public void treat(Zookeeper keeper){
+	public void treat(Zookeeper keeper) throws UnqualifiedZookeeperException{
 		if(keeper instanceof PlayZookeeper){
 			playChase();
 		} else {
-			//throw an exception
+			throw new UnqualifiedZookeeperException();
 		}
 	}
 
 	private void playChase() {
-		health += 4;
+		if(health + 4 >= 10){
+			health += 4;
+			Zoo.out.println(name + " played chase, gained " + 4 + " health");
+		} else {
+			int change = 10 - health;
+			health += change;
+			Zoo.out.println(name + " played chase, gained " + change + " health");
+		}
 	}
 
 }

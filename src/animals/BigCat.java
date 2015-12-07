@@ -13,8 +13,20 @@ public abstract class BigCat extends Animal {
 	
 	@Override
 	public void treat(Zookeeper keeper){
-		stroke();
+		stroke(1);
 	}
 	
-	public abstract void stroke();
+	/*all cats are stroked, but they react differently to it, so
+	 * they should pass how much health it gives them by overriding treat
+	 */
+	public void stroke(int healthBonus){
+		if(health + healthBonus >= 10){
+			health += healthBonus;
+			Zoo.out.println(name + " was stroked, gained " + healthBonus + " health");
+		} else {
+			int change = 10 - health;
+			health += change;
+			Zoo.out.println(name + " was stroked, gained " + change + " health");
+		}
+	}
 }
