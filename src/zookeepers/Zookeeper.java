@@ -44,8 +44,8 @@ public class Zookeeper {
 				//add loop to catch exception
 				int j = r.nextInt(animals.length);
 				try {
-					animals[j].treat(this);
 					Zoo.out.println(name + " treating " + animals[j].getName());
+					animals[j].treat(this);					
 				} catch (UnqualifiedZookeeperException e) {
 					Zoo.out.println(name + " tried to treat " + animals[j].getName() + ", but " + name + " is unable to");
 				}
