@@ -1,11 +1,13 @@
 package animals;
 
 import food.Food;
+import main.Zoo;
 import structures.Enclosure;
 import zookeepers.Zookeeper;
 
 public abstract class Animal {
 
+	private String name;
 	private int age;
 	private char gender;
 	public Food[] eats;
@@ -13,12 +15,18 @@ public abstract class Animal {
 	private int lifeExpectancy;
 	private Enclosure enclosure;
 	
-	protected Animal(int age, char gender, Food[] eats, int health, int lifeExpectancy){
+	protected Animal(String name, int age, char gender, Food[] eats, int health, int lifeExpectancy, Enclosure enlosure){
+		this.name = name;
 		this.age = age;
 		this.gender = gender;
 		this.eats = eats;
 		this.health = health;
 		this.lifeExpectancy = lifeExpectancy;
+		setEnclosure(enlosure);
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	/**
@@ -28,11 +36,18 @@ public abstract class Animal {
 		decreaseHealth();
 		eat();
 		incrAge();
-		if(health <= 0 || getAge() > getLifeExpectancy()){
+		Zoo.out.println(name + " is now " + age + " months old and has " + health + " health");
+		if(getAge() > getLifeExpectancy()){
+			Zoo.out.println(name + " has died of old age");
 			return false;
 		} else {
-			return true;
-		}
+			if(health <= 0){
+				Zoo.out.println(name + " has died of bad health");
+				return false;
+			} else {
+				return true;
+			}
+		}		
 	}
 	
 	/**
@@ -54,6 +69,7 @@ public abstract class Animal {
 		for(Food food : eats){
 			try {
 				enclosure.getFoodstore().takeFood(food, 1);
+				Zoo.out.println(name + " eating " + food.getName());
 				if(health + food.getEnergy() > 10){
 					health = 10;
 				} else {

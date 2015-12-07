@@ -5,8 +5,8 @@ import structures.Foodstore;
 
 public class PlayZookeeper extends Zookeeper {
 
-	public PlayZookeeper(Enclosure assignedEnclosure, Foodstore zooStore) {
-		super(assignedEnclosure, zooStore);
+	public PlayZookeeper(String name, Enclosure assignedEnclosure, Foodstore zooStore) {
+		super(name, assignedEnclosure, zooStore);
 	}
 
 }

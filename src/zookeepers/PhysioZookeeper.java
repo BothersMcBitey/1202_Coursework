@@ -5,8 +5,8 @@ import structures.Foodstore;
 
 public class PhysioZookeeper extends Zookeeper {
 
-	public PhysioZookeeper(Enclosure assignedEnclosure, Foodstore zooStore) {
-		super(assignedEnclosure, zooStore);
+	public PhysioZookeeper(String name, Enclosure assignedEnclosure, Foodstore zooStore) {
+		super(name, assignedEnclosure, zooStore);
 	}
 
 }

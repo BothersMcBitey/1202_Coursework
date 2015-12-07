@@ -29,7 +29,7 @@ public class Bucket {
 	}
 	
 	public void removeFood(int amount) throws InsufficientFoodException{
-		if(this.amount > amount){
+		if(this.amount >= amount){
 			this.amount -= amount;
 		} else {
 			throw new InsufficientFoodException(this.amount, amount);

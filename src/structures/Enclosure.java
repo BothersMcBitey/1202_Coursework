@@ -2,19 +2,24 @@ package structures;
 
 import java.util.ArrayList;
 
+import javax.xml.transform.Templates;
+
 import animals.*;
 import food.Food;
+import main.Zoo;
 
 public class Enclosure {
 
 	private Foodstore foodstore;
 	private ArrayList<Animal> animals;
 	private int waste;
+	private String name;
 	
-	public Enclosure(){
+	public Enclosure(String name){
 		foodstore = new Foodstore();
 		animals = new ArrayList<Animal>();
 		waste = 0;
+		this.name = name;
 	}
 	
 	public void addAnimal(Animal animalToAdd) throws EnclosureFullException {
@@ -70,15 +75,23 @@ public class Enclosure {
 		return animals.size();
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
 	/**
 	 * passes the month for each animal, removes animal
 	 * if it died
 	 */
 	public void aMonthPasses(){
-		for(Animal a : animals){
+		Animal[] tempAnimals = new Animal[0]; 
+	    tempAnimals =  animals.toArray(tempAnimals);
+		for(Animal a : tempAnimals){
 			if(!a.aMonthPasses()){
 				animals.remove(a);
+				Zoo.out.println(name + " removing " + a.getName() + " because it died");
 			}
 		}
+		Zoo.out.println(name + " has " + waste + " loads of wate in it");
 	}
 }

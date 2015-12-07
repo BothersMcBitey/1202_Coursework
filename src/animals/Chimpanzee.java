@@ -1,5 +1,6 @@
 package animals;
 
+import structures.Enclosure;
 import zookeepers.PlayZookeeper;
 import zookeepers.Zookeeper;
 
@@ -8,12 +9,12 @@ public class Chimpanzee extends Ape {
 	/*
 	 * creates newborn chimp
 	 */
-	public Chimpanzee(char gender){
-		this(0, gender, 10);
+	public Chimpanzee(String name, char gender, Enclosure enclosure){
+		this(name, 0, gender, 10, enclosure);
 	}
 	
-	public Chimpanzee(int age, char gender, int health) {
-		super(age, gender, health, 24);
+	public Chimpanzee(String name, int age, char gender, int health, Enclosure enclosure) {
+		super(name, age, gender, health, 24, enclosure);
 	}
 	
 	@Override

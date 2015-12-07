@@ -5,15 +5,15 @@ import structures.Enclosure;
 import structures.Foodstore;
 
 public class TestHarness {
-	public static void testAnimals() {
-		Lion var1 = new Lion(1,'m',10);
-		assertEquals("Expecting 1 from getAge() as a default value", var1.getAge(), 1);
-//		Bear var2 = new Bear();
-//		assertEquals("Expecting f from var2.getGender() as a default value",var2.getGender(), 'f');
-		var1.decreaseHealth();
-		System.out.println("[PASS] Decreased the health of the lion.");
-		passed++;
-	}
+//	public static void testAnimals() {
+//		Lion var1 = new Lion(1,'m',10);
+//		assertEquals("Expecting 1 from getAge() as a default value", var1.getAge(), 1);
+////		Bear var2 = new Bear();
+////		assertEquals("Expecting f from var2.getGender() as a default value",var2.getGender(), 'f');
+//		var1.decreaseHealth();
+//		System.out.println("[PASS] Decreased the health of the lion.");
+//		passed++;
+//	}
 //
 //	public static void testFoodstore() {
 //		Foodstore var5 = new Foodstore();

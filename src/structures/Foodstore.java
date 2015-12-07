@@ -21,6 +21,15 @@ public class Foodstore {
 			store.get(food).addFood(amount);
 		} else {
 			addBucket(food, amount);
+			addFood(food, amount);
+		}
+	}
+	
+	public int getRemaining(Food food) throws FoodNotFoundException{
+		if(store.containsKey(food)){
+			return store.get(food).getAmount();
+		} else {
+			throw new FoodNotFoundException(food);
 		}
 	}
 	
