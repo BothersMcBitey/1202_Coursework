@@ -1,0 +1,116 @@
+ECS Zoo:
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+   Contents:
+      -Running the ECS_Zoo
+      -The Config File
+      -Attempted Sections
+      -Extensions
+      
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Running the ECS_Zoo:
+   To run the zoo simulation use either of the following commands:
+   
+      ~$ java BootStrapper
+      ~$ java BootStrapper $configFilePath
+      
+   Where $configFilePath is replaced by the path of the config file you wish to be loaded, eg:
+   
+      (windows):
+         "config.txt"
+         "C:\Users\$Username\Documents\myZoo.txt"
+         
+      (linux):
+         "config.txt"
+         "~/Documents/myZoo.txt"
+         
+   Not specifying a config file will result in an empty zoo being loaded
+   
+---------------------------------------------------------------------------------------------------------------------------------------
+ 
+The Config File:
+   The config file should be a text file containing a series of tags, each of which has a number of parameters.
+   A config file containing unrecognized tags or incorrect parameters can still be read, and the bad sections
+   will simply be ignored by the simulation. Below is a list of tags and the parameters they take, in the format:
+   
+      [tag]:[param],[param],...    (exampleTag)
+   
+   Valid tags:
+   
+      Structures:
+         zoo:[name]                (zoo:Southampton Zoo)
+         enclosure:[name],[waste]  (enclosure:Lion Pit,20)
+         
+      Food:
+         [foodName]:[amount]       (steak:30)
+         
+      Animals:
+         [animalType]:[name],[sex],[age],[health],[enclosureIndex]     (lion:Leo,m,12,5,0)
+         
+      Staff:
+         [zookeeperType]:[name]    (zookeeper:Dave)
+      
+   Descriptions:
+      [sex]: m or f
+      [age]: in months
+      [health]: 0-10
+      [enclosureIndex]: the enclosure you wish to place the animal in, with 0 being the first declared enclosure, 1 being the second, etc.
+   
+      [foodName]: hay, steak, fruit, celery, fish, OR ice_cream
+      [animalType]: lion, tiger, gorilla, OR chimpanzee
+      [zookeeperType]: zookeeper, playZookeeper, OR physioZookeeper
+   
+   Food and zookeepers will be attached to the last declared enclosure, and if there is no declared enclosures
+   food will be added to the zoo's main foodStore. This means zookeepers must be declared after at least one enclosure.
+   
+---------------------------------------------------------------------------------------------------------------------------------------
+
+ Attempted Sections:
+   All sections are complete and fit the specification as far as I'm aware, except where the FAQ said it was okay to deviate. Below is a
+   section by section description of the areas where it deviates from the spec, with explainations as to why.
+    
+   1 - Modelling Animals:
+      The method 'aMonthPasses()' is not abstract, as I found the code was identical for all animals. 'eats' is no longer a string
+      array, which will be explained in section 2. Also, the animals produce waste in the 'eat()' method, as altough eating and pooping
+      usually don't happen at the same time, what you poop is a direct result of what you eat, so I felt it was appropriate.
+       
+   2 - Modelling Food and the Foodstore
+      Food is not modelled with Strings, but with Food objects that store the health gained from, waste made by, and name of a single 
+      type of food. Because of this addFood(String, int) is now addFood(Food, int). takeFood(Food) has an additional int parameter
+      indicating how much food to remove, to make it easier for zookeepers to move large amounts of food around. 
+      
+      Also, the amount of each food in the foodstore is modelled by each Food being mapped to a Bucket object, which has a capacity and
+      stores how much food is in the bucket at the moment.
+       
+   3 - Modelling Enclosures
+      This section follows the spec exactly
+             
+   4 - Modelling Different Animals
+      This section also follows the spec, but it's worth explaining that each animal's treat() method is just a shell that calls another
+      class-specific method that handles the actual treating, which allows for easier expansion in the future.
+             
+   5 - Modelling the Zoo Lifecycle
+      This section follows the spec exactly
+             
+   6 - Modelling the Zookeepers
+      This section follows the spec exactly
+             
+   7 - Reading a Simulation Configuration File
+      First, handling the command line argument is dealt with by a BootStrapper class, to make the Zoo class simpler and to allow easy
+      expansion of the arguments required later. Second, as can be seen above, some of the config tags have been modified to provide
+      more information and make it easier for the user to track which enclosure/zookeeper is being referred to. 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Extensions:
+   Minor Improvements (taking the spec extremely literally):
+      -Zookeepers now move food based on how many animals require each food in the enclosure, and how much space is left in the buckets
+      -DelayedPrintStream means that updates arrive slightly slower on the console, making it easier for the user to read them all
+      -Storing all the food types as static variables in Zoo means that no matter where you are in the project, you can be sure that
+       calling a food will give you the same values and will return a reference to the same object, making comparison easier.
+      -Animals now die of old age, not just hunger
+      -Animals, Enclosures, Keepers, and the Zoo all having names makes it easier to understand the output
+   
+   Major Additions:
