@@ -26,6 +26,7 @@ public class Zoo {
 	 * so each zoo can have it's own log - could pass out as parameter
 	 */
 	public static DelayedPrintStream out;
+	public static InputReader in;
 	
 	//Slightly clunky solution, will rework if I have time
 	public static HashSet<Food> foods;
@@ -70,13 +71,16 @@ public class Zoo {
 	
 	public Zoo(String config){
 		out = new DelayedPrintStream(System.out, 250);
+		in = new InputReader(System.in, out);
 		
 		//sets up the food store and food type constants
 		out.println("LOADING SIMULATOR:");
 		store = new Foodstore();
 		out.println("foodstore created");
 		if(foods == null) initializeFoods();
-		out.println("--------------------------");
+		out.println("==================================================================================================");
+		out.println("|************************************************************************************************|");
+		out.println("==================================================================================================");
 		out.println();
 		
 		//loads the zoo from the config file supplied
@@ -88,7 +92,9 @@ public class Zoo {
 		} else {
 			out.println("no config file, creating empty zoo");
 		}
-		out.println("--------------------------");
+		out.println("==================================================================================================");
+		out.println("|************************************************************************************************|");
+		out.println("==================================================================================================");
 		out.println();
 	}
 	
@@ -102,7 +108,9 @@ public class Zoo {
 		while(true){
 			out.println("MONTH " + month + ":");
 			aMonthPasses();
-			out.println("----------------------");
+			out.println("==================================================================================================");
+			out.println("|************************************************************************************************|");
+			out.println("==================================================================================================");
 			out.println();
 			month++;
 			try{
@@ -116,8 +124,9 @@ public class Zoo {
 	private void aMonthPasses(){
 		//restock the zoo store first, which reduces chance of the zoo running out of food
 		out.println("Restocking Food:");
+		out.println("==================================================================================================");
 		for(Food f : foods){
-			store.addFood(f, 20);
+			store.addFood(f, 50);
 			try {
 				out.println("adding " + f.getName() + ", store now has " + store.getRemaining(f));
 			} catch (FoodNotFoundException e) {
@@ -128,18 +137,26 @@ public class Zoo {
 			}
 		}
 		out.println();
-		
+		out.println("Zookeepers:");
+		out.println("==================================================================================================");
 		//Zookeepers do stuff next, which reduces chance of enclosures running out of food
 		for(Zookeeper z : zookeepers){
 			out.println(z.getName() + ":");
+			out.println("------------------------------------------------------");
 			z.aMonthPasses();
+			
 			out.println();
 		}
-		
+		out.println();		
+		out.println("Enclosures: ");
+		out.println("==================================================================================================");
 		//now each enclosure can work out what it's doing
 		for(Enclosure e : enclosures){
 			out.println(e.getName() + ":");
+			out.println("------------------------------------------------------");
 			e.aMonthPasses();
+			
+			out.println();
 		}
 	}
 	
@@ -185,7 +202,7 @@ public class Zoo {
 							break;
 							
 						case "enclosure":							
-							Enclosure tempEnclosure = new Enclosure(parameters[0]);
+							Enclosure tempEnclosure = new Enclosure(parameters[0], this);
 							tempEnclosure.addWaste(Integer.parseInt(parameters[1]));
 							enclosures.add(tempEnclosure);
 							out.println("creating enclosure");
@@ -226,28 +243,36 @@ public class Zoo {
 		}
 	}
 	
+	//try to add the requested animal to the specified enclosure
 	private void addAnimalToEnclosure(String animal, String name, char gender, int age, int health, int enclosureIndex){ 
-		Enclosure targetEnclosure = enclosures.get(enclosureIndex);
 		try{
-			switch (animal) {
-				case "lion":
-					targetEnclosure.addAnimal(new Lion(name, age, gender, health, targetEnclosure));
-					break;
-				case "tiger":
-					targetEnclosure.addAnimal(new Tiger(name, age, gender, health, targetEnclosure));	
-					break;
-				case "gorilla":
-					targetEnclosure.addAnimal(new Gorilla(name, age, gender, health, targetEnclosure));
-					break;
-				case "chimpanzee":
-					targetEnclosure.addAnimal(new Chimpanzee(name, age, gender, health, targetEnclosure));
-					break;
+			Enclosure targetEnclosure = enclosures.get(enclosureIndex);
+			try{
+				switch (animal) {
+					case "lion":
+						targetEnclosure.addAnimal(new Lion(name, age, gender, health, targetEnclosure));
+						break;
+					case "tiger":
+						targetEnclosure.addAnimal(new Tiger(name, age, gender, health, targetEnclosure));	
+						break;
+					case "gorilla":
+						targetEnclosure.addAnimal(new Gorilla(name, age, gender, health, targetEnclosure));
+						break;
+					case "chimpanzee":
+						targetEnclosure.addAnimal(new Chimpanzee(name, age, gender, health, targetEnclosure));
+						break;
+				}
+			} catch (EnclosureFullException e){
+				out.println("Cannot add " + animal + " to enclosure " + targetEnclosure);
 			}
-		} catch (EnclosureFullException e){
-			out.println("Cannot add " + animal + " to enclosure " + targetEnclosure);
+		} catch (ArrayIndexOutOfBoundsException e){
+			out.println("No enclosure declared at " + enclosureIndex);
 		}
 	}
 
+	/* Adds food to the last enclosure declared, if no enclosures are declared
+	 * then add the food to the zoo store
+	 */
 	private void addFoodToLastStore(String food, int amount) {
 		Foodstore targetStore;
 		if(enclosures.isEmpty()){
@@ -277,5 +302,9 @@ public class Zoo {
 				targetStore.addFood(ICE_CREAM, amount);
 				break;
 		}
+	}
+	
+	public Enclosure[] getEnclosures(){
+		return enclosures.toArray(new Enclosure[0]);
 	}
 }

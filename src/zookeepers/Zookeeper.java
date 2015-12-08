@@ -52,7 +52,7 @@ public class Zookeeper {
 				
 			}
 		} else {
-			Zoo.out.println(name + " not doing anything because all the animals are dead");
+			Zoo.out.println(name + " didn't do anything because there's no animals in his enclosure");
 		}
 	}
 	
@@ -66,7 +66,7 @@ public class Zookeeper {
 		
 		//check which foods are needed and how much
 		for(Animal a : animals){
-			for(Food f : a.eats){
+			for(Food f : a.getSpecies().getEATS()){
 				if(!requiredFoods.contains(f)){
 					requiredFoods.add(f);
 					amountNeeded.put(f, 1);

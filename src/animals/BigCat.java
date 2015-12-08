@@ -7,8 +7,8 @@ import zookeepers.Zookeeper;
 
 public abstract class BigCat extends Animal {
 	
-	public BigCat(String name, int age, char gender, int health, Enclosure enclosure) {
-		super(name, age, gender, new Food[] {Zoo.STEAK, Zoo.CELERY}, health, 24, enclosure);
+	public BigCat(String name, int age, char gender, int health, Enclosure enclosure, Species species) {
+		super(name, age, gender, health, enclosure, species);
 	}
 	
 	@Override
