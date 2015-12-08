@@ -1,10 +1,18 @@
 zoo:Soton Zoo
 steak:50
 hay:30
-enclosure:Lion enclosure,50
+enclosure:Lion enclosure,20
 hay:20
 steak:5
 celery:10
+zookeeper:Dave
+enclosure:Ape enclosure,0
+playZookeeper:Susie
+enclosure:Spare enclosure,0
+playZookeeper:Kevin
 lion:Leo,M,12,5,0
-lion:Steve,F,10,4,0
-playZookeeper:Dave
+lion:Mrs. Tibbles,F,10,4,0
+gorilla:Atlas,m,13,8,1
+gorilla:Gaea,f,15,9,1
+gorilla:Herc,m,1,10,1
+gorilla:Calypso,f,0,5,1

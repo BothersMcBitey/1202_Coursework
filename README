@@ -26,7 +26,7 @@ Running the ECS_Zoo:
          "config.txt"
          "~/Documents/myZoo.txt"
          
-   Not specifying a config file will result in an empty zoo being loaded
+   Not specifying a config file will result in an empty zoo being loaded.
    
 ---------------------------------------------------------------------------------------------------------------------------------------
  
@@ -73,8 +73,9 @@ The Config File:
     
    1 - Modelling Animals:
       The method 'aMonthPasses()' is not abstract, as I found the code was identical for all animals. 'eats' is no longer a string
-      array, which will be explained in section 2. Also, the animals produce waste in the 'eat()' method, as altough eating and pooping
-      usually don't happen at the same time, what you poop is a direct result of what you eat, so I felt it was appropriate.
+      array, which will be explained in section 2. Also, the animals produce waste in the 'eat()' method, as although eating and pooping
+      usually don't happen at the same time, what you poop is a direct result of what you eat, so I felt it was appropriate. The biggest
+      change is that several properies are now stored in a Species object, including the eats[], which will be explained in the extension.
        
    2 - Modelling Food and the Foodstore
       Food is not modelled with Strings, but with Food objects that store the health gained from, waste made by, and name of a single 
@@ -112,5 +113,21 @@ Extensions:
        calling a food will give you the same values and will return a reference to the same object, making comparison easier.
       -Animals now die of old age, not just hunger
       -Animals, Enclosures, Keepers, and the Zoo all having names makes it easier to understand the output
+      -There is now a system for accepting runtime input, required for the extension
    
    Major Additions:
+      -Breeding:
+         Animals can now breed. If the animal in question is female and not already pregnant it will search its enclosure for a suitable
+         mate, and then try to breed with a random chance of success. If successful, the animal remains pregnant for a number of months
+         specified in its Species object. When the gestation period is up, the animal gives birth to a random number of offspring (placed
+         in the parent's enclosure) between 1 and its max litter size, also stored by the Species. The user is asked to name each new 
+         animal, and if there's no more room in the parent's enclosure they are asked which enclosure to move it to. If all enclosures
+         are full, the animal is 'sent to a farm upstate'.
+         
+         The reason for the Species object is that adding the breeding system required each animal to store information on its gestation
+         period, litter size, and species, which would be identical for all animals of one species anyway, and gave the already large 
+         constructors an absurd number of arguments. I decided to move all this information, along with other species-based data like
+         diet and life expectancy into a separate object, of which each animal class would possess a single instance shared between
+         all it's own instances. This compressed 5 constructor arguments into one, and also meant there was less duplication of data
+         across animal objects. The species object also provides an easy way to add extra information to animals for extending the 
+         simulation further, such as if you wanted to make animals breed only when they reached their species' age of maturity.
